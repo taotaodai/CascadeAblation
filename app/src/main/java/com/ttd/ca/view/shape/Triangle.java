@@ -12,8 +12,8 @@ public class Triangle extends Shape {
     public Point b;
     public Point c;
 
-    public Triangle(int w, int h, Point a, Point b, Point c) {
-        super(a, w, h);
+    public Triangle(Point a, Point b, Point c) {
+        super(a);
         this.a = a;
         this.b = b;
         this.c = c;

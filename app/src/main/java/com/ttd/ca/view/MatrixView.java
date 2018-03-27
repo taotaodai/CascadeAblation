@@ -16,6 +16,7 @@ import java.util.List;
 
 import static com.ttd.ca.utils.ShapeUtil.UNIT_SIZE;
 import static com.ttd.ca.view.WorkBench.DOT_MATRIX;
+import static com.ttd.ca.view.WorkBench.SIZE;
 
 /**
  * Created by wt on 2018/3/12.
@@ -78,71 +79,77 @@ public class MatrixView extends View {
 
         Point sp = new Point(shape.origin.x, shape.origin.y);
 
-        /**
-         * 1.获取点阵中和原点距离较近的点，至多四个点
-         */
-        Point p1 = null;
-        try {
-            p1 = DOT_MATRIX[rowIndex][lineIndex];
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Point p2 = null;
-        try {
-            p2 = DOT_MATRIX[rowIndex][lineIndex + 1];
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Point outSize = verifyOutofRange(sp, shape);
+        if (outSize != null) {
+            shape.setOrigin(outSize);
+        } else {
+            /**
+             * 1.获取点阵中和原点距离较近的点，至多四个点
+             */
+            Point p1 = null;
+            try {
+                p1 = DOT_MATRIX[rowIndex][lineIndex];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                e.printStackTrace();
+            }
+            Point p2 = null;
+            try {
+                p2 = DOT_MATRIX[rowIndex][lineIndex + 1];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                e.printStackTrace();
+            }
 
-        Point p3 = null;
+            Point p3 = null;
 
-        try {
-            p3 = DOT_MATRIX[rowIndex + 1][lineIndex];
-        } catch (Exception e) {
-            e.printStackTrace();
+            try {
+                p3 = DOT_MATRIX[rowIndex + 1][lineIndex];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                e.printStackTrace();
+            }
+
+            Point p4 = null;
+            try {
+                p4 = DOT_MATRIX[rowIndex + 1][lineIndex + 1];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                e.printStackTrace();
+            }
+
+            List<Float> targets = new ArrayList<>();
+            List<Point> adjacent = new ArrayList<>();
+            if (p1 != null) {
+                adjacent.add(p1);
+                targets.add(getDistance(sp, p1));
+            }
+
+            if (p2 != null) {
+                adjacent.add(p2);
+                targets.add(getDistance(sp, p2));
+            }
+
+            if (p3 != null) {
+                adjacent.add(p3);
+                targets.add(getDistance(sp, p3));
+            }
+
+            if (p4 != null) {
+                adjacent.add(p4);
+                targets.add(getDistance(sp, p4));
+            }
+            /**
+             * 2.获取与原点距离最近的点
+             */
+            int minIndex = getMinIndex(targets);
+
+            int x = adjacent.get(minIndex).x;
+            int y = adjacent.get(minIndex).y;
+            shape.setOrigin(new Point(x, y));
         }
-
-        Point p4 = null;
-        try {
-            p4 = DOT_MATRIX[rowIndex + 1][lineIndex + 1];
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        List<Float> targets = new ArrayList<>();
-        List<Point> adjacent = new ArrayList<>();
-        if (p1 != null) {
-            adjacent.add(p1);
-            targets.add(getDistance(sp, p1));
-        }
-
-        if (p2 != null) {
-            adjacent.add(p2);
-            targets.add(getDistance(sp, p2));
-        }
-
-        if (p3 != null) {
-            adjacent.add(p3);
-            targets.add(getDistance(sp, p3));
-        }
-
-        if (p4 != null) {
-            adjacent.add(p4);
-            targets.add(getDistance(sp, p4));
-        }
-        /**
-         * 2.获取与原点距离最近的点
-         */
-        int minIndex = getMinIndex(targets);
-
-        int x = adjacent.get(minIndex).x;
-        int y = adjacent.get(minIndex).y;
-        shape.setOrigin(new Point(x, y));
     }
 
     /**
      * 根据两点距离公式计算出各点到原点的距离，
      * 这里偷懒一下，没加根号，但不影响结果
+     *
      * @param p1
      * @param p2
      * @return
@@ -153,6 +160,7 @@ public class MatrixView extends View {
 
     /**
      * 获得最小距离的下标
+     *
      * @param arr
      * @return
      */
@@ -164,6 +172,62 @@ public class MatrixView extends View {
             }
         }
         return minIndex;
+    }
+
+    private Point verifyOutofRange(Point sp, Shape shape) {
+        Point vp = null;
+        int wbSize = (SIZE - 1) * ShapeUtil.UNIT_SIZE;
+        /**
+         * 当原点超出左右边界时
+         */
+        boolean outofX = false;
+        if (shape.xMin < 0) {
+            vp = new Point(sp.x + Math.abs(shape.xMin), sp.y);
+            outofX = true;
+        } else if (shape.xMax > wbSize) {
+            vp = new Point(sp.x - (shape.xMax - wbSize), sp.y);
+            outofX = true;
+        }
+
+        boolean outofY = false;
+        if (shape.yMin < 0) {
+            int dis = Math.abs(shape.yMin);
+            if (vp == null) {
+                vp = new Point(sp.x, sp.y + dis);
+            } else {
+                vp.y = sp.y + dis;
+            }
+            outofY = true;
+        } else if (shape.yMax > wbSize) {
+            int dis = shape.yMax - wbSize;
+            if (vp == null) {
+                vp = new Point(sp.x, sp.y - dis);
+            } else {
+                vp.y = sp.y - dis;
+            }
+            outofY = true;
+        }
+
+        if (vp != null) {
+            if (!outofX) {
+                int temp = sp.x / ShapeUtil.UNIT_SIZE;
+                if (sp.x - temp * ShapeUtil.UNIT_SIZE < ShapeUtil.UNIT_SIZE * (temp + 1) - sp.x) {
+                    vp.x = temp * ShapeUtil.UNIT_SIZE;
+                } else {
+                    vp.x = (temp + 1) * ShapeUtil.UNIT_SIZE;
+                }
+            }
+            if (!outofY) {
+                int temp = sp.y / ShapeUtil.UNIT_SIZE;
+                if (sp.y - temp * ShapeUtil.UNIT_SIZE < ShapeUtil.UNIT_SIZE * (temp + 1) - sp.y) {
+                    vp.y = temp * ShapeUtil.UNIT_SIZE;
+                } else {
+                    vp.y = (temp + 1) * ShapeUtil.UNIT_SIZE;
+                }
+            }
+        }
+
+        return vp;
     }
 
     @Override
@@ -189,7 +253,7 @@ public class MatrixView extends View {
                 setShapeTouchPoint(shape, event);
 
                 postInvalidate();
-                if(onVerifyListener != null){
+                if (onVerifyListener != null) {
                     onVerifyListener.onVerify();
                 }
                 break;
@@ -245,6 +309,7 @@ public class MatrixView extends View {
 
     /**
      * 判断手指是否触摸到该图形
+     *
      * @param event
      * @param shape
      * @return
@@ -253,39 +318,11 @@ public class MatrixView extends View {
         return shape.getRegion().contains(((int) event.getX()), ((int) event.getY()));
     }
 
-//    @Override
-//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        setMeasuredDimension(wh[0], wh[1]);
-//    }
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        setMeasuredDimension(ShapeUtil.UNIT_SIZE * (SIZE - 1), ShapeUtil.UNIT_SIZE * (SIZE - 1));
+    }
 
-
-//    @Override
-//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        int width = this.getMeasuredSize(widthMeasureSpec, true);
-//        int height = this.getMeasuredSize(heightMeasureSpec, false);
-//        setMeasuredDimension(width, height);
-//    }
-
-    //    private int getMeasuredSize(int widthMeasureSpec, boolean b) {
-//        //模式
-//        int specMode = MeasureSpec.getMode(widthMeasureSpec);
-//        //尺寸
-//        int specSize = MeasureSpec.getSize(widthMeasureSpec);
-//        //计算所得的实际尺寸，要被返回
-//        int retSize = 0;
-//        //得到两侧的留边
-//        int padding = (b ? getPaddingLeft() + getPaddingRight() : getPaddingTop() + getPaddingBottom());
-//        //对不同模式进行判断
-//        if (specMode == MeasureSpec.EXACTLY) {//显示指定控件大小
-//            retSize = specSize;
-//        } else {
-//            retSize = (b ? bitmap.getWidth() + padding : bitmap.getHeight() + padding);
-//            if (specMode == MeasureSpec.UNSPECIFIED) {
-//                retSize = Math.min(retSize, specSize);
-//            }
-//        }
-//        return retSize;
-//    }
     public interface OnVerifyListener {
         void onVerify();
     }

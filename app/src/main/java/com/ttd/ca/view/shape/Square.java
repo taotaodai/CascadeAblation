@@ -8,7 +8,7 @@ import com.ttd.ca.entity.Point;
  */
 
 public class Square extends Shape {
-    public Square(Point origin, int w, int h) {
-        super(origin, w, h);
+    public Square(Point origin) {
+        super(origin);
     }
 }

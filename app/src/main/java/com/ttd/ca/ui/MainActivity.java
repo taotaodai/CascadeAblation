@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
     private MatrixView mv;
     private TargetShape ts;
     private Button btnReset;
-    private Button btnVerify;
     private Button btnLast;
     private Button btnNext;
 
@@ -43,18 +42,12 @@ public class MainActivity extends AppCompatActivity {
         mv = (MatrixView) findViewById(R.id.mv_main);
         ts = (TargetShape) findViewById(R.id.ts_main);
         btnReset = (Button) findViewById(R.id.btn_reset);
-        btnVerify = (Button) findViewById(R.id.btn_verify);
         btnLast = (Button) findViewById(R.id.btn_last);
         btnNext = (Button) findViewById(R.id.btn_next);
         btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 initViews();
-            }
-        });
-        btnVerify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
             }
         });
         btnLast.setOnClickListener(new View.OnClickListener() {

@@ -156,7 +156,7 @@ public class ShapeUtil {
                     }
                 }
             }
-            if(matchCount == targets.size()){
+            if (matchCount == targets.size()) {
                 return true;
             }
         }

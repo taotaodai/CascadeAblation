@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.ttd.ca.entity.Point;
+import com.ttd.ca.utils.ShapeUtil;
 
 import static com.ttd.ca.utils.ShapeUtil.UNIT_SIZE;
 
@@ -15,8 +16,9 @@ import static com.ttd.ca.utils.ShapeUtil.UNIT_SIZE;
  * Created by wt on 2018/3/14.
  */
 
-public class WorkBench extends View{
-    public static final Point[][] DOT_MATRIX = new Point[10][10];
+public class WorkBench extends View {
+    public static final int SIZE = 11;
+    public static final Point[][] DOT_MATRIX = new Point[SIZE][SIZE];
 
     public WorkBench(Context context) {
         super(context);
@@ -54,6 +56,10 @@ public class WorkBench extends View{
                 canvas.drawCircle(point.x, point.y, 10, p);
             }
         }
+    }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        setMeasuredDimension(ShapeUtil.UNIT_SIZE * (SIZE - 1), ShapeUtil.UNIT_SIZE * (SIZE - 1));
     }
 }
