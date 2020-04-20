@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.android.debug.hv.ViewServer;
 import com.ttd.ca.R;
 import com.ttd.ca.utils.ShapeUtil;
 import com.ttd.ca.view.TargetShape;
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ViewServer.get(this).addWindow(this);
 
         setContentView(R.layout.activity_main);
         mv = (MatrixView) findViewById(R.id.mv_main);
@@ -70,6 +73,18 @@ public class MainActivity extends AppCompatActivity {
         });
 
         initViews();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ViewServer.get(this).removeWindow(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ViewServer.get(this).setFocusedWindow(this);
     }
 
     private void initViews() {
