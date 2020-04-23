@@ -1,10 +1,8 @@
 package com.ttd.ca.view.shape;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.ttd.ca.entity.Point;
-
-import java.util.List;
 
 /**
  * Created by wt on 2018/3/15.
@@ -28,7 +26,7 @@ public class Polygon extends Shape {
     public void setOrigin(Point origin) {
         int disX = origin.x - this.origin.x;
         int disY = origin.y - this.origin.y;
-        /**
+        /*
          * 遍历所有多边形的顶点，并添加位移，即原点的位移
          */
         for (int i = 0; i < peaks.length; i++) {
