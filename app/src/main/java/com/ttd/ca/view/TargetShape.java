@@ -21,12 +21,15 @@ public class TargetShape extends View {
 
     public TargetShape(Context context) {
         super(context);
+        init();
     }
 
     public TargetShape(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
+    @Deprecated
     public List<Shape> getShapes() {
         return shapes;
     }
@@ -46,9 +49,13 @@ public class TargetShape extends View {
             return;
         }
 
-        Region region = new Region(0, 0, wh[0], wh[1]);
-        ShapeUtil shapeUtil = new ShapeUtil(region);
         shapeUtil.createShapes(canvas, shapes);
+    }
+
+    private ShapeUtil shapeUtil;
+    private void init(){
+        Region region = new Region(0, 0, wh[0], wh[1]);
+        shapeUtil = new ShapeUtil(region);
     }
 
     @Override

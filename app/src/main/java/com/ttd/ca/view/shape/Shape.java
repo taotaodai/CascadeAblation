@@ -24,7 +24,7 @@ public class Shape implements Serializable {
     /**
      * 组成图形的各个顶点
      */
-    protected Point[] peaks;
+    Point[] peaks;
     /**
      * 图形的宽度
      */

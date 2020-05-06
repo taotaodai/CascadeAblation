@@ -9,13 +9,14 @@ import java.util.List;
  */
 
 public class BaseQuestion {
-    protected List<Shape> shapes;
-    protected List<Shape> targetShapes;
+    List<Shape> shapes;
+    List<Shape> targetShapes;
 
     public List<Shape> getShapes() {
         return shapes;
     }
 
+    @Deprecated
     public void setShapes(List<Shape> shapes) {
         this.shapes = shapes;
     }
@@ -24,6 +25,7 @@ public class BaseQuestion {
         return targetShapes;
     }
 
+    @Deprecated
     public void setTargetShapes(List<Shape> targetShapes) {
         this.targetShapes = targetShapes;
     }

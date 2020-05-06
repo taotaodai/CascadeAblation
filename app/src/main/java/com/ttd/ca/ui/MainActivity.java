@@ -26,9 +26,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private MatrixView mv;
     private TargetShape ts;
-    private Button btnReset;
-    private Button btnLast;
-    private Button btnNext;
 
     private List<Shape> shapes;
     private List<Shape> targetShapes;
@@ -42,11 +39,11 @@ public class MainActivity extends AppCompatActivity {
         ViewServer.get(this).addWindow(this);
 
         setContentView(R.layout.activity_main);
-        mv = (MatrixView) findViewById(R.id.mv_main);
-        ts = (TargetShape) findViewById(R.id.ts_main);
-        btnReset = (Button) findViewById(R.id.btn_reset);
-        btnLast = (Button) findViewById(R.id.btn_last);
-        btnNext = (Button) findViewById(R.id.btn_next);
+        mv = findViewById(R.id.mv_main);
+        ts = findViewById(R.id.ts_main);
+        Button btnReset = findViewById(R.id.btn_reset);
+        Button btnLast = findViewById(R.id.btn_last);
+        Button btnNext = findViewById(R.id.btn_next);
         btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

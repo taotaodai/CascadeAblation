@@ -68,7 +68,7 @@ public class ShapeUtil {
             path.lineTo(t.c.x, t.c.y);
             path.close();
         } else if (shape instanceof Polygon) {
-            Point[] peaks = ((Polygon) shape).getPeaks();
+            Point[] peaks = shape.getPeaks();
             for (int i = 0; i < peaks.length; i++) {
                 Point point = peaks[i];
                 if (i == 0) {
@@ -90,9 +90,9 @@ public class ShapeUtil {
         List<Integer> ys = new ArrayList<>();
         for (int i = 0; i < shapes.size(); i++) {
             Point[] peaks = shapes.get(i).getPeaks();
-            for (int j = 0; j < peaks.length; j++) {
-                xs.add(peaks[j].x);
-                ys.add(peaks[j].y);
+            for (Point peak : peaks) {
+                xs.add(peak.x);
+                ys.add(peak.y);
             }
         }
 
@@ -120,8 +120,7 @@ public class ShapeUtil {
             Collections.copy(t, targets);
             Collections.copy(s, shapes);
 
-            /**
-             *
+            /*
              * 1.目标图形的原点：固定已知
              */
             Shape shapeT = targets.get(0);
@@ -130,7 +129,7 @@ public class ShapeUtil {
             Point originS;
 
             Shape tempS = shapes.get(i);
-            /**
+            /*
              * 2.将与基准图一致那个图的原点作为待层叠图的基准点
              */
             if (tempS.getType() == shapeT.getType()) {
@@ -141,7 +140,7 @@ public class ShapeUtil {
                     for (int m = 0; m < s.size(); m++) {
                         Shape shape = s.get(m);
                         Point ps = shape.getOrigin();
-                        /**
+                        /*
                          * 3.验证与基准图形的相对位移。如果相对位移一致，并且形状一致，即有一个图形匹配
                          */
                         if ((pt.x - originT.x == ps.x - originS.x)

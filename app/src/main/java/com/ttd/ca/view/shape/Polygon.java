@@ -29,11 +29,9 @@ public class Polygon extends Shape {
         /*
          * 遍历所有多边形的顶点，并添加位移，即原点的位移
          */
-        for (int i = 0; i < peaks.length; i++) {
-            Point point = peaks[i];
+        for (Point point : peaks) {
             point.x += disX;
             point.y += disY;
-
         }
         initOtherValues();
         w = xMax - xMin;

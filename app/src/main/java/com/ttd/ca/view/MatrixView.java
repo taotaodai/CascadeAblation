@@ -1,5 +1,6 @@
 package com.ttd.ca.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Region;
@@ -28,6 +29,7 @@ public class MatrixView extends View {
     private List<Shape> shapes;
     private OnVerifyListener onVerifyListener;
 
+    @Deprecated
     public List<Shape> getShapes() {
         return shapes;
     }
@@ -42,10 +44,12 @@ public class MatrixView extends View {
 
     public MatrixView(Context context) {
         super(context);
+        init();
     }
 
     public MatrixView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public void setOnVerifyListener(OnVerifyListener onVerifyListener) {
@@ -60,10 +64,12 @@ public class MatrixView extends View {
             return;
         }
 
-        Region region = new Region(0, 0, getMeasuredWidth(), getMeasuredHeight());
-        ShapeUtil shapeUtil = new ShapeUtil(region);
+        @SuppressLint("DrawAllocation") Region region = new Region(0, 0, getMeasuredWidth(), getMeasuredHeight());
+        @SuppressLint("DrawAllocation") ShapeUtil shapeUtil= new ShapeUtil(region);
         shapeUtil.createShapes(canvas, shapes);
+    }
 
+    private void init(){
     }
 
 
@@ -71,11 +77,10 @@ public class MatrixView extends View {
      * 为了提高游戏体验，
      * 计算原点距离点阵中最近的点，并将原点设为该点
      *
-     * @param shape
      */
     private void autoPressClose(Shape shape) {
-        int lineIndex = (int) (shape.origin.x / UNIT_SIZE);
-        int rowIndex = (int) (shape.origin.y / UNIT_SIZE);
+        int lineIndex = shape.origin.x / UNIT_SIZE;
+        int rowIndex = shape.origin.y / UNIT_SIZE;
 
         Point sp = new Point(shape.origin.x, shape.origin.y);
 
@@ -83,7 +88,7 @@ public class MatrixView extends View {
         if (outSize != null) {
             shape.setOrigin(outSize);
         } else {
-            /**
+            /*
              * 1.获取点阵中和原点距离较近的点，至多四个点
              */
             Point p1 = null;
@@ -135,7 +140,7 @@ public class MatrixView extends View {
                 adjacent.add(p4);
                 targets.add(getDistance(sp, p4));
             }
-            /**
+            /*
              * 2.获取与原点距离最近的点
              */
             int minIndex = getMinIndex(targets);
@@ -150,9 +155,6 @@ public class MatrixView extends View {
      * 根据两点距离公式计算出各点到原点的距离，
      * 这里偷懒一下，没加根号，但不影响结果
      *
-     * @param p1
-     * @param p2
-     * @return
      */
     private float getDistance(Point p1, Point p2) {
         return (float) (Math.pow(Math.abs(p2.x - p1.x), 2) + Math.pow(Math.abs(p2.y - p1.y), 2));
@@ -161,8 +163,6 @@ public class MatrixView extends View {
     /**
      * 获得最小距离的下标
      *
-     * @param arr
-     * @return
      */
     public static int getMinIndex(List<Float> arr) {
         int minIndex = 0;
@@ -177,7 +177,7 @@ public class MatrixView extends View {
     private Point verifyOutofRange(Point sp, Shape shape) {
         Point vp = null;
         int wbSize = (SIZE - 1) * ShapeUtil.UNIT_SIZE;
-        /**
+        /*
          * 当原点超出左右边界时
          */
         boolean outofX = false;
@@ -230,6 +230,7 @@ public class MatrixView extends View {
         return vp;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         Shape shape = getSelectedShape(event);
@@ -257,8 +258,6 @@ public class MatrixView extends View {
                     onVerifyListener.onVerify();
                 }
                 break;
-            case MotionEvent.ACTION_CANCEL:
-                break;
             default:
                 break;
         }
@@ -277,8 +276,6 @@ public class MatrixView extends View {
     /**
      * 确定图形移动后的新位置(改变原点位置)
      *
-     * @param shape
-     * @param event
      */
     private void setShapeNewPlace(Shape shape, MotionEvent event) {
         shape.setOrigin(new Point(Math.round(shape.getOrigin().x + event.getX() - shape.tp.x),
@@ -310,9 +307,6 @@ public class MatrixView extends View {
     /**
      * 判断手指是否触摸到该图形
      *
-     * @param event
-     * @param shape
-     * @return
      */
     private boolean isShapeSelected(MotionEvent event, Shape shape) {
         return shape.getRegion().contains(((int) event.getX()), ((int) event.getY()));
